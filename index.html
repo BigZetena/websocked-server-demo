@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <title>WebSocket Client</title>
+  </head>
+  <body>
+    <input id="messageInput" type="text" placeholder="Введите сообщение" />
+    <button onclick="sendMessage()">Отправить</button>
+    <div id="chat"></div>
+
+    <script>
+      let socket = new WebSocket("ws://localhost:8080");
+
+      socket.onopen = function (event) {
+        console.log("Соединение установлено");
+      };
+
+      socket.onmessage = function (event) {
+        console.log(event);
+        let chat = document.getElementById("chat");
+        chat.innerHTML += event.data + "<br>";
+      };
+
+      socket.onerror = function (event) {
+        console.log("Ошибка: " + event.message);
+      };
+
+      socket.onclose = function (event) {
+        if (event.wasClean) {
+          console.log(
+            `Соединение закрыто чисто, код=${event.code} причина=${event.reason}`
+          );
+        } else {
+          console.log("Соединение прервано");
+        }
+      };
+
+      function sendMessage() {
+        let input = document.getElementById("messageInput");
+        socket.send(input.value);
+        input.value = "";
+        console.log(socket);
+      }
+    </script>
+  </body>
+</html>
